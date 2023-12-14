@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Montserrat Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+
+  <!-- Material Icons -->
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Bootstrap CDN -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <!-- Link CSS -->
+  <link rel="stylesheet" type="text/css" href="/styles/styles.css">
+  <title>Dashboard</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark navbar-expand-lg padding" role="navigation">
+    <a class="navbar-brand mr-0 mr-md-2 text-white" href="#" aria-label="Bootstrap">
+      <label>
+        Xin chào: <strong>
+          <%= username %>
+        </strong>
+        </div>
+      </label>
+      <a class="navbar-textt nav-link font-weight-bold text-white ml-auto btn" href="logout">Đăng xuất</a>
+      <a class="navbar-textt nav-link btn btn-primary btn-sm font-weight-bold text-white margin-left signin"
+        type="button" href="/">Trang chủ</a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </a>
+  </nav>
+
+  <!-- Bootstrap Jumbotron -->
+  <div class="jumbotron">
+    <div class="container mt-5 ">
+      <div class="row justify-content-center">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <strong class="text-danger">
+              <%= error ? (typeof error=='boolean' ? 'Có lỗi xảy ra' : error) :'' %>
+            </strong>
+            <strong class="text-success">
+              <%= success ? 'Thành công' :'' %>
+            </strong>
+            <button class="btn btn-primary" onclick="addShoes()">Thêm</button>
+          </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tên giày</th>
+                <th scope="col">Giá</th>
+                <th scope="col">Mô tả</th>
+                <th scope="col" class="text-center">Chức năng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% shoess.forEach((shoes,index)=>{ %>
+                <tr>
+                  <th scope="row">
+                    <%= index+1 %>
+                  </th>
+                  <td>
+                    <a href="shoess/<%= shoes._id %>">
+                      <%=shoes.title %>
+                    </a>
+                  </td>
+                  <td>
+                    <%= shoes.price %>đ
+                  </td>
+                  <td>
+                    <%= shoes.description %>
+                  </td>
+
+                  <td class="d-flex text-center justify-content-center">
+                    <a class="btn btn-primary mx-2" href="shoess/<%= shoes._id %>">
+                      Xem chi tiết</a>
+                    <% if(role=='admin' ){ %>
+                      <button class=" btn btn-warning mx-2" onclick="editShoes('<%= shoes._id %>')">Chỉnh
+                        Sửa</button>
+                      <form method="post" action="/shoess/delete/<%= shoes._id %>">
+                        <button class="btn btn-danger" onclick="confirmDelete('<%= shoes._id %>')">
+                          Xóa
+                        </button>
+                      </form>
+                      <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="shoesModal" tabindex="-1" role="dialog" aria-labelledby="shoesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="shoesModalLabel">
+            Thêm
+          </h5>
+          <button type="button" class="close btn btn-danger" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="shoesForm" method="post" action="/shoess">
+            <div class="form-group mb-2">
+              <label for="shoesTitle">Tiêu đề</label>
+              <input type="text" class="form-control" id="shoesTitle" name="title" required />
+            </div>
+            <div class="form-group mb-2">
+              <label for="shoesPrice">Giá</label>
+              <input type="number" min="0" class="form-control" id="shoesPrice" name="price" required />
+            </div>
+            <div class="form-group mb-2">
+              <label for="shoesDescription">Mô tả ngắn</label>
+              <textarea class="form-control" id="shoesDescription" name="description"></textarea>
+            </div>
+            <div class="text-center w-100">
+              <button type="submit" class="btn btn-primary">Thêm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer id="sticky-footer" class="py-4 bg-dark text-white-50">
+    <div class="container text-center">
+      <small>Copyright &copy; Your Website</small> <small>
+        <p id="demo"></p>
+
+        <script>
+          var d = new Date();
+          document.getElementById("demo").innerHTML = d;
+        </script>
+      </small>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script>
+    const shoess = JSON.parse('<%- JSON.stringify(shoess) %>');
+    const shoesForm = document.getElementById("shoesForm");
+    function confirmDelete(shoesId) {
+      var result = confirm("Bạn có chắc muốn xóa giày này?");
+      if (result) {
+        // Nếu người dùng đồng ý xóa, chuyển hướng đến route xóa giày
+        window.location.href = "/shoess/delete/" + shoesId;
+      }
+    }
+    function addShoes() {
+      document.getElementById("shoesModalLabel").textContent = "Thêm";
+      // reset dữ liệu input
+      document.getElementById("shoesTitle").value = "";
+      document.getElementById("shoesPrice").value = "";
+      document.getElementById("shoesDescription").value = "";
+      // Thay đổi action của form để gửi yêu cầu thêm mới
+      shoesForm.action = "/shoess";
+
+      // Mở modal
+      $("#shoesModal").modal("show");
+    }
+    function editShoes(shoesId) {
+      const shoes = shoess.filter(shoes => shoes._id == shoesId)[0];
+      if (!shoes) {
+        return;
+      }
+      // Cập nhật nội dung modal với thông tin giày
+      document.getElementById("shoesModalLabel").textContent = "Sửa";
+      document.getElementById("shoesTitle").value = shoes.title;
+      document.getElementById("shoesPrice").value = shoes.price;
+      document.getElementById("shoesDescription").value = shoes.description;
+      // Thay đổi action của form để gửi yêu cầu chỉnh sửa thay vì thêm mới
+      document.getElementById("shoesForm").action =
+        "/shoess/update/" + shoesId;
+
+      // Mở modal
+      $("#shoesModal").modal("show");
+
+    }
+  </script>
+</body>
+
+</html>
